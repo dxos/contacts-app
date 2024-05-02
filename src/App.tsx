@@ -15,6 +15,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { ContactsApp } from "./ContactsApp";
+import { ContactType } from "./types";
 
 const config = async () => new Config(Local(), Defaults());
 
@@ -73,6 +74,8 @@ export const App = () => {
       createWorker={createWorker}
       shell="./shell.html"
       onInitialized={async (client) => {
+        client.addSchema(ContactType);
+
         const searchParams = new URLSearchParams(location.search);
         if (
           !client.halo.identity.get() &&

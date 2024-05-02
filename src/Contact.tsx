@@ -1,23 +1,30 @@
-import { Expando } from "@dxos/echo-schema";
 import React, { useState } from "react";
 
+import { ContactType } from "./types";
+
 export type ContactProps = {
-  contactProp: Expando | null;
-  handleEdit: (contact: Expando) => void;
+  contactProp: ContactType | null;
+  handleEdit: (contact: ContactType) => void;
+  handleCreate: () => void;
 };
 
-export const Contact = ({ contactProp, handleEdit }: ContactProps) => {
+export const Contact = ({
+  contactProp,
+  handleEdit,
+  handleCreate,
+}: ContactProps) => {
   const contact = contactProp;
-  const handleEdiContact = handleEdit;
+  const editContact = handleEdit;
+  const createContact = handleCreate;
 
   const [editMode, setEditMode] = useState(false);
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Doe");
-  const [email, setEmail] = useState("johndoe@example.com");
-  const [phone, setPhone] = useState("123-456-7890");
-  const [website, setWebsite] = useState("https://johndoe.com");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [website, setWebsite] = useState("");
 
-  return (
+  return contact ? (
     <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
       <button
         onClick={() => setEditMode(!editMode)}
@@ -31,14 +38,14 @@ export const Contact = ({ contactProp, handleEdit }: ContactProps) => {
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            className="rounded border px-2 py-1 text-2xl font-bold"
+            className="rounded border px-2 py-1 text-2xl font-bold text-center"
             style={{ width: `${firstName.length + 1}ch` }}
           />
           <input
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            className="rounded border px-2 py-1 text-2xl font-bold"
+            className="rounded border px-2 py-1 text-2xl font-bold text-center"
             style={{ width: `${lastName.length + 1}ch` }}
           />
         </div>
@@ -107,6 +114,10 @@ export const Contact = ({ contactProp, handleEdit }: ContactProps) => {
           )}
         </div>
       </div>
+    </section>
+  ) : (
+    <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
+      <button onClick={() => createContact()}>Create New Contact</button>
     </section>
   );
 };

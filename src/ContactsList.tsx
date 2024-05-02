@@ -1,11 +1,14 @@
-import { Expando } from "@dxos/echo-schema";
 import React from "react";
 
+import { ContactType } from "./types";
+
 export type ContactsListProps = {
-  contacts: Expando[];
+  contacts: ContactType[];
 };
 
 export const ContactsList = (props: ContactsListProps) => {
+  const contacts = props.contacts;
+
   return (
     <aside className="w-1/4 bg-gray-200 dark:bg-gray-800 relative">
       <div className="inline absolute right-0 mt-5 pr-4">
@@ -32,15 +35,21 @@ export const ContactsList = (props: ContactsListProps) => {
         Contacts
       </h1>
       <ul>
-        <li className="border-b border-gray-300 p-4 hover:bg-gray-100 dark:hover:bg-gray-700">
-          <div className="flex items-center">
-            <div className="ml-4">
-              <div className="text-md font-medium text-gray-900 dark:text-gray-100">
-                John Doe
+        {contacts.map((contact) => (
+          <li
+            key={contact.id}
+            className="border-b border-gray-300 p-4 hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <div className="flex items-center">
+              <div className="ml-4">
+                <div className="text-md font-medium text-gray-900 dark:text-gray-100">
+                  {contact.firstName} {contact.lastName}
+                  Contact
+                </div>
               </div>
             </div>
-          </div>
-        </li>
+          </li>
+        ))}
       </ul>
     </aside>
   );

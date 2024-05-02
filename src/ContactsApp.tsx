@@ -1,4 +1,4 @@
-import { Expando, useQuery, useSpace } from "@dxos/react-client/echo";
+import { Filter, create, useQuery, useSpace } from "@dxos/react-client/echo";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { PublicKey, useClient, useShell } from "@dxos/react-client";
@@ -7,16 +7,7 @@ import { useIdentity } from "@dxos/react-client/halo";
 import { Contact } from "./Contact";
 import { ContactsList } from "./ContactsList";
 
-// -- ECHO schema ------------------------------------------------
-
-// const CONTACT_TYPENAME = "dxos.org.contact";
-
-// export type ContactProps = {
-//   name: "string";
-//   email: "string";
-//   emoji: "string";
-//   color: "string";
-// };
+import { ContactType } from "./types";
 
 export const ContactsApp = () => {
   const { spaceKey } = useParams<{ spaceKey: string }>();
@@ -32,13 +23,16 @@ export const ContactsApp = () => {
   const shell = useShell();
   const client = useClient();
 
-  const [selectedContact, setSelectedContact] = useState<Expando | null>();
+  const [selectedContact, setSelectedContact] = useState<ContactType | null>();
+
+  const selectContact = (contact: ContactType) => {
+    setSelectedContact(contact);
+  };
 
   // Fetch the contacts objects
-  // const allContacts = useQuery(
-  //   space,
-  //   (object) => object.__typename == CONTACT_TYPENAME
-  // );
+  const contacts = useQuery(space, Filter.schema(ContactType));
+
+  console.log(contacts.length);
   // const otherContacts = allContacts.filter(
   //   (contact) => contact.identity !== identityKeyString
   // );
@@ -69,7 +63,7 @@ export const ContactsApp = () => {
   //     contactSchema = existingSchemas.objects[0];
   //   }
 
-  //   const contactObj = new Expando(
+  //   const contactObj = new ContactType(
   //     {
   //       name: contact.name,
   //       email: contact.email,
@@ -87,8 +81,23 @@ export const ContactsApp = () => {
   return (
     <>
       <main className="flex min-h-screen">
-        <ContactsList contacts={[]} />
-        <Contact contactProp={selectedContact} handleEdit={() => {}} />)
+        <ContactsList contacts={contacts} />
+        <Contact
+          contactProp={selectedContact}
+          handleEdit={() => {}}
+          handleCreate={() => {
+            const contact = create(ContactType, {
+              firstName: "",
+              lastName: "",
+              email: "",
+              phone: "",
+              website: "",
+            });
+
+            space.db.add(contact);
+          }}
+        />
+        )
       </main>
     </>
   );
