@@ -3,8 +3,8 @@
 This app was created with a DXOS application template.
 
 - [x] React
-- [x] DXOS UI System
-- [x] Storybook
+- [ ] DXOS UI System
+- [ ] Storybook
 
 Run the app with `npm`:
 
