@@ -10,8 +10,8 @@ export type ContactProps = {
 
 export const Contact = ({
   contact,
-  handleCreate,
-  handleDelete,
+  onCreate: handleCreate,
+  onDelete: handleDelete,
 }: ContactProps) => {
   const [editMode, setEditMode] = useState(false);
   const [firstName, setFirstName] = useState(contact ? contact.firstName : "");
@@ -115,7 +115,6 @@ export const Contact = ({
                     type="text"
                     value={contactState[fieldKey]}
                     onChange={(e) => {
-                      console.log("set" + field, e.target.value);
                       setFunctions["set" + field](e.target.value);
                     }}
                     onBlur={(e) => {

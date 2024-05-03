@@ -14,8 +14,8 @@ const contactNameIsBlank = (contact: ContactType) => {
 
 export const ContactsList = ({
   contacts,
-  handleSelect,
-  handleCreate,
+  onSelect: handleSelect,
+  onCreate: handleCreate,
 }: ContactsListProps) => {
   return (
     <aside className="w-1/4 bg-gray-200 dark:bg-gray-800 relative">
@@ -49,7 +49,6 @@ export const ContactsList = ({
             className="border-b border-gray-300 p-4 hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={() => {
               handleSelect(contact);
-              console.log("contact clicked: ", contact.id);
             }}
           >
             <div className="flex items-center">
