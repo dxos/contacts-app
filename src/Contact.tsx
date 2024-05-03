@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { ContactType } from "./types";
 
@@ -18,26 +18,55 @@ export const Contact = ({
   const createContact = handleCreate;
 
   const [editMode, setEditMode] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [website, setWebsite] = useState("");
+  const [firstName, setFirstName] = useState(contact ? contact.firstName : "");
+  const [lastName, setLastName] = useState(contact ? contact.lastName : "");
+  const [email, setEmail] = useState(contact ? contact.email : "");
+  const [phone, setPhone] = useState(contact ? contact.phone : "");
+  const [website, setWebsite] = useState(contact ? contact.website : "");
+
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (contact) {
+      setEditMode(false);
+      setFirstName(contact.firstName);
+      setLastName(contact.lastName);
+      setEmail(contact.email);
+      setPhone(contact.phone);
+      setWebsite(contact.website);
+    }
+
+    if (
+      contact &&
+      !contact.firstName &&
+      !contact.lastName &&
+      !contact.email &&
+      !contact.phone &&
+      !contact.website
+    ) {
+      setEditMode(true);
+      setTimeout(() => firstNameInputRef.current?.focus(), 0);
+    }
+  }, [contact]);
 
   return contact ? (
     <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
       <button
-        onClick={() => setEditMode(!editMode)}
+        onClick={() => {
+          setEditMode(!editMode);
+        }}
         className="absolute right-0 top-0 m-4 rounded bg-blue-500 px-4 py-2 text-white"
       >
-        {editMode ? "Save" : "Edit"}
+        {editMode ? "Done" : "Edit"}
       </button>
       {editMode ? (
         <div className="mb-4 text-center text-2xl font-bold">
           <input
+            ref={firstNameInputRef}
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            onBlur={(e) => (contact.firstName = e.target.value)}
             className="rounded border px-2 py-1 text-2xl font-bold text-center"
             style={{ width: `${firstName.length + 1}ch` }}
           />
@@ -45,6 +74,7 @@ export const Contact = ({
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            onBlur={(e) => (contact.lastName = e.target.value)}
             className="rounded border px-2 py-1 text-2xl font-bold text-center"
             style={{ width: `${lastName.length + 1}ch` }}
           />
@@ -66,6 +96,7 @@ export const Contact = ({
                 type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={(e) => (contact.email = e.target.value)}
                 className="w-full px-2 py-1"
               />
             </div>
@@ -85,6 +116,7 @@ export const Contact = ({
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                onBlur={(e) => (contact.phone = e.target.value)}
                 className="w-full px-2 py-1"
               />
             </div>
@@ -104,6 +136,7 @@ export const Contact = ({
                 type="text"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
+                onBlur={(e) => (contact.website = e.target.value)}
                 className="w-full px-2 py-1"
               />
             </div>
@@ -117,7 +150,14 @@ export const Contact = ({
     </section>
   ) : (
     <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
-      <button onClick={() => createContact()}>Create New Contact</button>
+      <div className="flex justify-center items-center h-full">
+        <button
+          onClick={() => createContact()}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded"
+        >
+          Create New Contact
+        </button>
+      </div>
     </section>
   );
 };

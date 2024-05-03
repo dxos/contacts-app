@@ -23,81 +23,41 @@ export const ContactsApp = () => {
   const shell = useShell();
   const client = useClient();
 
-  const [selectedContact, setSelectedContact] = useState<ContactType | null>();
-
-  const selectContact = (contact: ContactType) => {
-    setSelectedContact(contact);
-  };
-
   // Fetch the contacts objects
   const contacts = useQuery(space, Filter.schema(ContactType));
 
-  console.log(contacts.length);
-  // const otherContacts = allContacts.filter(
-  //   (contact) => contact.identity !== identityKeyString
-  // );
+  // select one of them
+  const [selectedContact, setSelectedContact] = useState<ContactType | null>(
+    contacts[0] || null
+  );
 
-  // const handleAddContact = async (contact: ContactProps) => {
-  //   // Check to see if schema exists in the database
-  //   const existingSchemas = space?.db.query(
-  //     (object) => object.typename === CONTACT_TYPENAME
-  //   );
+  const handleCreateContact = () => {
+    const contact = create(ContactType, {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      website: "",
+    });
 
-  //   let contactSchema;
+    space.db.add(contact);
 
-  //   if (!existingSchemas || existingSchemas.objects.length === 0) {
-  //     console.log("no schema found, creating new one");
-  //     contactSchema = new Schema({
-  //       typename: CONTACT_TYPENAME,
-  //       props: [
-  //         { id: "name", type: Schema.PropType.STRING },
-  //         { id: "email", type: Schema.PropType.STRING }, // TODO: change to organization
-  //         { id: "emoji", type: Schema.PropType.STRING },
-  //         { id: "color", type: Schema.PropType.STRING },
-  //       ],
-  //     });
-
-  //     space?.db.add(contactSchema);
-  //   } else {
-  //     console.log("schema found, using existing one");
-  //     contactSchema = existingSchemas.objects[0];
-  //   }
-
-  //   const contactObj = new ContactType(
-  //     {
-  //       name: contact.name,
-  //       email: contact.email,
-  //       emoji: contact.emoji,
-  //       color: contact.color,
-  //       identity: identity?.identityKey.toString(),
-  //     },
-  //     { schema: contactSchema }
-  //   );
-
-  //   console.log("adding contact to space", contactObj);
-  //   space?.db.add(contactObj);
-  // };
+    setSelectedContact(contact);
+  };
 
   return (
     <>
       <main className="flex min-h-screen">
-        <ContactsList contacts={contacts} />
+        <ContactsList
+          contacts={contacts}
+          handleSelectContact={setSelectedContact}
+          handleCreateContact={handleCreateContact}
+        />
         <Contact
           contactProp={selectedContact}
           handleEdit={() => {}}
-          handleCreate={() => {
-            const contact = create(ContactType, {
-              firstName: "",
-              lastName: "",
-              email: "",
-              phone: "",
-              website: "",
-            });
-
-            space.db.add(contact);
-          }}
+          handleCreate={handleCreateContact}
         />
-        )
       </main>
     </>
   );
