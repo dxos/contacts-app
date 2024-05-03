@@ -135,18 +135,20 @@ export const Contact = ({
             </div>
           );
         })}
-        <button
-          onClick={() => {
-            if (
-              window.confirm("Are you sure you want to delete this contact?")
-            ) {
-              handleDelete(contact);
-            }
-          }}
-          className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 text-sm rounded"
-        >
-          Delete Contact
-        </button>
+        {editMode ? (
+          <button
+            onClick={() => {
+              if (
+                window.confirm("Are you sure you want to delete this contact?")
+              ) {
+                handleDelete(contact);
+              }
+            }}
+            className="mt-4 border-2 bg-white text-gray-500 hover:bg-red-500 hover:border-red-500 hover:text-white py-1 px-2 text-sm rounded"
+          >
+            Delete Contact
+          </button>
+        ) : null}
       </div>
     </section>
   ) : (
