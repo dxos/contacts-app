@@ -4,17 +4,11 @@ import { ContactType } from "./types";
 
 export type ContactProps = {
   contactProp: ContactType | null;
-  handleEdit: (contact: ContactType) => void;
   handleCreate: () => void;
 };
 
-export const Contact = ({
-  contactProp,
-  handleEdit,
-  handleCreate,
-}: ContactProps) => {
+export const Contact = ({ contactProp, handleCreate }: ContactProps) => {
   const contact = contactProp;
-  const editContact = handleEdit;
   const createContact = handleCreate;
 
   const [editMode, setEditMode] = useState(false);
@@ -24,6 +18,7 @@ export const Contact = ({
   const [phone, setPhone] = useState(contact ? contact.phone : "");
   const [website, setWebsite] = useState(contact ? contact.website : "");
 
+  // TODO(jm): more appropriate React way to do this?
   const firstNameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,6 +32,7 @@ export const Contact = ({
     }
 
     if (
+      // TODO(jm): really want to roll things like this up into a utility functions on ContactType
       contact &&
       !contact.firstName &&
       !contact.lastName &&

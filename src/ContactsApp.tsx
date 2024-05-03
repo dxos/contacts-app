@@ -55,7 +55,6 @@ export const ContactsApp = () => {
         />
         <Contact
           contactProp={selectedContact}
-          handleEdit={() => {}}
           handleCreate={handleCreateContact}
         />
       </main>
