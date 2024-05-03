@@ -1,8 +1,8 @@
+import { useClient, useShell } from "@dxos/react-client";
 import { Filter, create, useQuery, useSpace } from "@dxos/react-client/echo";
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { PublicKey, useClient, useShell } from "@dxos/react-client";
 import { useIdentity } from "@dxos/react-client/halo";
+import React, { useCallback, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { Contact } from "./Contact";
 import { ContactsList } from "./ContactsList";
@@ -34,7 +34,7 @@ export const ContactsPage = () => {
     setSelectedContact(contact);
   };
 
-  const handleCreateContact = () => {
+  const handleCreateContact = useCallback(() => {
     const contact = create(ContactType, {
       firstName: "",
       lastName: "",
@@ -46,7 +46,7 @@ export const ContactsPage = () => {
     space.db.add(contact);
 
     setSelectedContact(contact);
-  };
+  }, [space.db]);
 
   const handleDeleteContact = (contact: ContactType) => {
     space.db.remove(contact);
@@ -60,11 +60,14 @@ export const ContactsPage = () => {
         onSelect={handleSelectContact}
         onCreate={handleCreateContact}
       />
-      <Contact
-        contact={selectedContact}
-        onCreate={handleCreateContact}
-        onDelete={handleDeleteContact}
-      />
+      {selectedContact && (
+        <Contact
+          key={selectedContact.id} // Note: Keying on ID creates a new component instance when the ID changes.
+          contact={selectedContact}
+          onCreate={handleCreateContact}
+          onDelete={handleDeleteContact}
+        />
+      )}
     </main>
   );
 };

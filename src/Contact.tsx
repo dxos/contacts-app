@@ -1,66 +1,54 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { ContactType } from "./types";
 
 export type ContactProps = {
   contact: ContactType | null;
-  handleCreate: () => void;
-  handleDelete: (contact: ContactType) => void;
+  onCreate: () => void;
+  onDelete: (contact: ContactType) => void;
 };
 
-export const Contact = ({
-  contact,
-  onCreate: handleCreate,
-  onDelete: handleDelete,
-}: ContactProps) => {
-  const [editMode, setEditMode] = useState(false);
-  const [firstName, setFirstName] = useState(contact ? contact.firstName : "");
-  const [lastName, setLastName] = useState(contact ? contact.lastName : "");
-  const [email, setEmail] = useState(contact ? contact.email : "");
-  const [phone, setPhone] = useState(contact ? contact.phone : "");
-  const [website, setWebsite] = useState(contact ? contact.website : "");
-  const setFunctions = {
-    setFirstName,
-    setLastName,
-    setEmail,
-    setPhone,
-    setWebsite,
-  };
+// -- TODO(Zan): Move to contact module
+const contactIsEmpty = (contact: ContactType) => {
+  return (
+    !contact.firstName &&
+    !contact.lastName &&
+    !contact.email &&
+    !contact.phone &&
+    !contact.website
+  );
+};
 
-  const contactState = {
-    firstName,
-    lastName,
-    email,
-    phone,
-    website,
-  };
+type ContactTypeKey = keyof ContactType;
+// --/
+
+export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
+  const [editMode, setEditMode] = useState(false);
+  const [formState, setFormState] = useState<ContactType>(
+    // Hack to make a deep copy of the contact object and eject from the reactive proxy.
+    JSON.parse(JSON.stringify(contact))
+  );
 
   // TODO(jm): more appropriate React way to do this?
   const firstNameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (contact) {
-      setEditMode(false);
-      setFirstName(contact.firstName);
-      setLastName(contact.lastName);
-      setEmail(contact.email);
-      setPhone(contact.phone);
-      setWebsite(contact.website);
-    }
-
-    if (
-      // TODO(jm): really want to roll things like this up into a utility functions on ContactType
-      contact &&
-      !contact.firstName &&
-      !contact.lastName &&
-      !contact.email &&
-      !contact.phone &&
-      !contact.website
-    ) {
+    if (contactIsEmpty(contact)) {
       setEditMode(true);
       setTimeout(() => firstNameInputRef.current?.focus(), 0);
     }
-  }, [contact]);
+  }, [contact, setEditMode]);
+
+  const updateContactField = useCallback(
+    <Field extends ContactTypeKey>(
+      field: Field,
+      newValue: ContactType[Field]
+    ) => {
+      // Mutate the reactive echo object
+      contact[field] = newValue;
+    },
+    [contact]
+  );
 
   return contact ? (
     <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
@@ -77,33 +65,36 @@ export const Contact = ({
           <input
             ref={firstNameInputRef}
             type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            onBlur={(e) => (contact.firstName = e.target.value)}
+            value={formState.firstName}
+            onChange={(e) =>
+              setFormState((state) => ({ ...state, firstName: e.target.value }))
+            }
+            onBlur={(e) => updateContactField("firstName", e.target.value)}
             className="rounded border px-2 py-1 text-2xl font-bold text-center"
-            style={{ width: `${firstName.length + 1}ch` }}
+            style={{ width: `${formState.firstName.length + 1}ch` }}
           />
           <input
             type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            onBlur={(e) => (contact.lastName = e.target.value)}
+            value={formState.lastName}
+            onChange={(e) =>
+              setFormState((state) => ({ ...state, lastName: e.target.value }))
+            }
+            onBlur={(e) => updateContactField("lastName", e.target.value)}
             className="rounded border px-2 py-1 text-2xl font-bold text-center"
-            style={{ width: `${lastName.length + 1}ch` }}
+            style={{ width: `${formState.lastName.length + 1}ch` }}
           />
         </div>
       ) : (
         <div className="mb-4 border border-white px-2 py-1 text-center text-2xl font-bold dark:border-black dark:text-gray-200">
-          {firstName.length > 0 ? firstName : "\u00A0"}{" "}
-          {lastName.length > 0 ? lastName : "\u00A0"}
+          {formState.firstName.length > 0 ? formState.firstName : "\u00A0"}{" "}
+          {formState.lastName.length > 0 ? formState.lastName : "\u00A0"}
         </div>
       )}
       <div className="flex flex-col">
-        {["Email", "Phone", "Website"].map((field) => {
-          const fieldKey = field.toLowerCase();
+        {(["email", "phone", "website"] as ContactTypeKey[]).map((field) => {
           return (
             <div
-              key={fieldKey}
+              key={field}
               className="mb-2 flex items-center rounded bg-gray-100 p-2 dark:bg-gray-700"
             >
               <div className="mr-2 w-20 text-right text-sm text-gray-500 dark:text-gray-400">
@@ -113,20 +104,18 @@ export const Contact = ({
                 <div className="w-full">
                   <input
                     type="text"
-                    value={contactState[fieldKey]}
-                    onChange={(e) => {
-                      setFunctions["set" + field](e.target.value);
-                    }}
-                    onBlur={(e) => {
-                      contact[fieldKey] = e.target.value;
-                    }}
+                    value={formState[field]}
+                    onChange={(e) =>
+                      setFormState((state) => {
+                        return { ...state, [field]: e.target.value };
+                      })
+                    }
+                    onBlur={(e) => updateContactField(field, e.target.value)}
                     className="w-full px-2 py-1"
                   />
                 </div>
               ) : (
-                <div className="px-2 py-1">
-                  {contact[fieldKey].length > 0 ? contact[fieldKey] : "\u00A0"}
-                </div>
+                <div className="px-2 py-1">{contact[field] ?? ""}</div>
               )}
             </div>
           );
@@ -137,7 +126,7 @@ export const Contact = ({
               if (
                 window.confirm("Are you sure you want to delete this contact?")
               ) {
-                handleDelete(contact);
+                onDelete(contact);
               }
             }}
             className="mt-4 border-2 bg-white text-gray-500 hover:bg-red-500 hover:border-red-500 hover:text-white py-1 px-2 text-sm rounded"
@@ -151,7 +140,7 @@ export const Contact = ({
     <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
       <div className="flex justify-center items-center h-full">
         <button
-          onClick={() => createContact()}
+          onClick={onCreate}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded"
         >
           Create New Contact
