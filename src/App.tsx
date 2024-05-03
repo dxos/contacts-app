@@ -14,7 +14,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { ContactsApp } from "./ContactsApp";
+import { ContactsPage } from "./ContactsPage";
 import { ContactType } from "./types";
 
 const config = async () => new Config(Local(), Defaults());
@@ -59,7 +59,7 @@ export const Home = () => {
 const router = createBrowserRouter([
   {
     path: "/space/:spaceKey",
-    element: <ContactsApp />,
+    element: <ContactsPage />,
   },
   {
     path: "/",

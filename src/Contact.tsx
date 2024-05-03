@@ -3,19 +3,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { ContactType } from "./types";
 
 export type ContactProps = {
-  contactProp: ContactType | null;
+  contact: ContactType | null;
   handleCreate: () => void;
   handleDelete: (contact: ContactType) => void;
 };
 
 export const Contact = ({
-  contactProp,
+  contact,
   handleCreate,
   handleDelete,
 }: ContactProps) => {
-  const contact = contactProp;
-  const createContact = handleCreate;
-
   const [editMode, setEditMode] = useState(false);
   const [firstName, setFirstName] = useState(contact ? contact.firstName : "");
   const [lastName, setLastName] = useState(contact ? contact.lastName : "");
