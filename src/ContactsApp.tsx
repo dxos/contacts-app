@@ -45,6 +45,11 @@ export const ContactsApp = () => {
     setSelectedContact(contact);
   };
 
+  const handleDeleteContact = (contact: ContactType) => {
+    space.db.remove(contact);
+    setSelectedContact(null);
+  };
+
   return (
     <>
       <main className="flex min-h-screen">
@@ -56,6 +61,7 @@ export const ContactsApp = () => {
         <Contact
           contactProp={selectedContact}
           handleCreate={handleCreateContact}
+          handleDelete={handleDeleteContact}
         />
       </main>
     </>
