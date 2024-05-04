@@ -4,8 +4,8 @@ import { ContactType } from "./types";
 
 export type ContactsListProps = {
   contacts: ContactType[];
-  handleSelect: (contact: ContactType) => void;
-  handleCreate: () => void;
+  onSelect: (contact: ContactType) => void;
+  onCreate: () => void;
 };
 
 const contactNameIsBlank = (contact: ContactType) => {
@@ -14,8 +14,8 @@ const contactNameIsBlank = (contact: ContactType) => {
 
 export const ContactsList = ({
   contacts,
-  onSelect: handleSelect,
-  onCreate: handleCreate,
+  onSelect,
+  onCreate,
 }: ContactsListProps) => {
   return (
     <aside className="w-1/4 bg-gray-200 dark:bg-gray-800 relative">
@@ -47,9 +47,7 @@ export const ContactsList = ({
           <li
             key={contact.id}
             className="border-b border-gray-300 p-4 hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={() => {
-              handleSelect(contact);
-            }}
+            onClick={(e) => onSelect(contact)}
           >
             <div className="flex items-center">
               <div className="ml-4">
@@ -64,9 +62,7 @@ export const ContactsList = ({
         ))}
         <li className="p-4 flex justify-center">
           <button
-            onClick={() => {
-              handleCreate();
-            }}
+            onClick={onCreate}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded"
           >
             Create New Contact
