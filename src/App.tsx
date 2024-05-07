@@ -5,6 +5,7 @@ import {
   Local,
   Defaults,
   useShell,
+  useClient,
 } from "@dxos/react-client";
 import { useSpace } from "@dxos/react-client/echo";
 import {
@@ -26,6 +27,7 @@ const createWorker = () =>
   });
 
 export const Home = () => {
+  const client = useClient();
   const space = useSpace();
   const shell = useShell();
   const [search, setSearchParams] = useSearchParams();
@@ -39,6 +41,11 @@ export const Home = () => {
         p.delete("deviceInvitationCode");
         return p;
       });
+      void (async () => {
+        await client.shell.initializeIdentity({
+          invitationCode: deviceInvitationCode,
+        });
+      })();
     } else if (invitationCode) {
       setSearchParams((p) => {
         p.delete("spaceInvitationCode");
