@@ -46,7 +46,7 @@ export const ContactsList = ({
         {contacts.map((contact) => (
           <li
             key={contact.id}
-            className="border-b border-gray-300 p-4 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="border-b border-gray-300 p-4 hover:bg-gray-100 dark:hover:bg-gray-700  hover:cursor-pointer"
             onClick={(e) => onSelect(contact)}
           >
             <div className="flex items-center">
