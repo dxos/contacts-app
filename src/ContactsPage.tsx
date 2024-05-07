@@ -1,27 +1,23 @@
+import { useShell } from "@dxos/react-client";
 import { Filter, create, useQuery, useSpace } from "@dxos/react-client/echo";
-import React, { useState } from "react";
+
+import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
-import { PublicKey, useClient, useShell } from "@dxos/react-client";
-import { useIdentity } from "@dxos/react-client/halo";
 
 import { Contact } from "./Contact";
 import { ContactsList } from "./ContactsList";
 
 import { ContactType } from "./types";
 
-export const ContactsApp = () => {
+export const ContactsPage = () => {
   const { spaceKey } = useParams<{ spaceKey: string }>();
 
-  const identity = useIdentity();
-  const identityKeyString = identity.identityKey.toString();
   const space = useSpace(spaceKey);
+  const shell = useShell();
 
   if (!space) {
     console.log("WARNING: space not found!");
   }
-
-  const shell = useShell();
-  const client = useClient();
 
   // Fetch the contacts objects
   const contacts = useQuery(space, Filter.schema(ContactType));
@@ -31,7 +27,11 @@ export const ContactsApp = () => {
     contacts[0] || null
   );
 
-  const handleCreateContact = () => {
+  const handleSelectContact = (contact: ContactType) => {
+    setSelectedContact(contact);
+  };
+
+  const handleCreateContact = useCallback(() => {
     const contact = create(ContactType, {
       firstName: "",
       lastName: "",
@@ -43,7 +43,7 @@ export const ContactsApp = () => {
     space.db.add(contact);
 
     setSelectedContact(contact);
-  };
+  }, [space.db]);
 
   const handleDeleteContact = (contact: ContactType) => {
     space.db.remove(contact);
@@ -51,19 +51,26 @@ export const ContactsApp = () => {
   };
 
   return (
-    <>
-      <main className="flex min-h-screen">
-        <ContactsList
-          contacts={contacts}
-          handleSelectContact={setSelectedContact}
-          handleCreateContact={handleCreateContact}
-        />
+    <main className="flex min-h-screen">
+      <ContactsList
+        contacts={contacts}
+        onSelect={handleSelectContact}
+        onCreate={handleCreateContact}
+        onInviteClick={async () => {
+          if (!space) {
+            return;
+          }
+          void shell.shareSpace({ spaceKey: space?.key });
+        }}
+      />
+      {selectedContact && (
         <Contact
-          contactProp={selectedContact}
-          handleCreate={handleCreateContact}
-          handleDelete={handleDeleteContact}
+          key={selectedContact.id} // Note: Keying on ID creates a new component instance when the ID changes.
+          contact={selectedContact}
+          onCreate={handleCreateContact}
+          onDelete={handleDeleteContact}
         />
-      </main>
-    </>
+      )}
+    </main>
   );
 };
