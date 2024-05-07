@@ -1,6 +1,6 @@
-import { useClient, useShell } from "@dxos/react-client";
+import { useShell } from "@dxos/react-client";
 import { Filter, create, useQuery, useSpace } from "@dxos/react-client/echo";
-import { useIdentity } from "@dxos/react-client/halo";
+
 import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -12,9 +12,6 @@ import { ContactType } from "./types";
 export const ContactsPage = () => {
   const { spaceKey } = useParams<{ spaceKey: string }>();
 
-  const client = useClient();
-  const identity = useIdentity();
-  const identityKeyString = identity.identityKey.toString();
   const space = useSpace(spaceKey);
   const shell = useShell();
 
@@ -59,6 +56,12 @@ export const ContactsPage = () => {
         contacts={contacts}
         onSelect={handleSelectContact}
         onCreate={handleCreateContact}
+        onInviteClick={async () => {
+          if (!space) {
+            return;
+          }
+          void shell.shareSpace({ spaceKey: space?.key });
+        }}
       />
       {selectedContact && (
         <Contact
