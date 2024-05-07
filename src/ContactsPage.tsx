@@ -13,10 +13,13 @@ export const ContactsPage = () => {
   const { spaceKey } = useParams<{ spaceKey: string }>();
 
   const space = useSpace(spaceKey);
+
   const shell = useShell();
 
   if (!space) {
     console.log("WARNING: space not found!");
+  } else {
+    space.db.schemaRegistry.add(ContactType);
   }
 
   // Fetch the contacts objects
