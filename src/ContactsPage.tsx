@@ -1,7 +1,7 @@
 import { useShell } from "@dxos/react-client";
 import { Filter, create, useQuery, useSpace } from "@dxos/react-client/echo";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { Contact } from "./Contact";
@@ -19,8 +19,14 @@ export const ContactsPage = () => {
   if (!space) {
     console.log("WARNING: space not found!");
   } else {
-    space.db.schemaRegistry.add(ContactType);
+    // space.db.schemaRegistry.add(ContactType);
   }
+
+  useEffect(() => {
+    if (space) {
+      space.db.schemaRegistry.add(ContactType);
+    }
+  }, [space]);
 
   // Fetch the contacts objects
   const contacts = useQuery(space, Filter.schema(ContactType));
