@@ -8,6 +8,7 @@ import { Contact } from "./Contact";
 import { ContactsList } from "./ContactsList";
 
 import { ContactType } from "./types";
+import { DynamicEchoSchema, ReactiveObject } from "@dxos/echo-schema";
 
 export const ContactsPage = () => {
   const { spaceKey } = useParams<{ spaceKey: string }>();
@@ -16,45 +17,52 @@ export const ContactsPage = () => {
 
   const shell = useShell();
 
+  const [persistedContactType, setPersistedContactType] =
+    useState<DynamicEchoSchema | null>(null);
+
   if (!space) {
     console.log("WARNING: space not found!");
-  } else {
-    // space.db.schemaRegistry.add(ContactType);
   }
 
   useEffect(() => {
     if (space) {
-      space.db.schemaRegistry.add(ContactType);
+      let contactType = space?.db.schemaRegistry.getRegisteredByTypename(
+        "dxos.app.contacts.Contact"
+      );
+
+      if (!contactType) {
+        contactType = space.db.schemaRegistry.add(ContactType);
+      }
+
+      setPersistedContactType(contactType);
     }
   }, [space]);
 
   // Fetch the contacts objects
-  const contacts = useQuery(space, Filter.schema(ContactType));
-
-  // select one of them
-  const [selectedContact, setSelectedContact] = useState<ContactType | null>(
-    contacts[0] || null
+  const contacts = useQuery(
+    space,
+    persistedContactType ? Filter.schema(persistedContactType) : () => false,
+    {},
+    [persistedContactType]
   );
 
-  const handleSelectContact = (contact: ContactType) => {
+  // select one of them
+  const [selectedContact, setSelectedContact] =
+    useState<ReactiveObject<any> | null>(contacts[0] || null);
+
+  const handleSelectContact = (contact: DynamicEchoSchema) => {
     setSelectedContact(contact);
   };
 
   const handleCreateContact = useCallback(() => {
-    const contact = create(ContactType, {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      website: "",
-    });
+    const contact = create(persistedContactType, {});
 
     space.db.add(contact);
 
     setSelectedContact(contact);
-  }, [space.db]);
+  }, [space.db, persistedContactType]);
 
-  const handleDeleteContact = (contact: ContactType) => {
+  const handleDeleteContact = (contact: DynamicEchoSchema) => {
     space.db.remove(contact);
     setSelectedContact(null);
   };
