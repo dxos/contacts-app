@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { ContactType } from "./types";
 import { ReactiveObject } from "@dxos/echo-schema";
 
 export type ContactProps = {
@@ -20,9 +19,6 @@ const contactIsEmpty = (contact: ReactiveObject<any>) => {
   );
 };
 
-type ContactTypeKey = keyof ReactiveObject<any>;
-// --/
-
 export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
   const [editMode, setEditMode] = useState(false);
   const [formState, setFormState] = useState<ReactiveObject<any>>(
@@ -30,11 +26,8 @@ export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
     JSON.parse(JSON.stringify(contact))
   );
 
-  console.log("rendering contact");
-
   useEffect(() => {
     setFormState(JSON.parse(JSON.stringify(contact)));
-    console.log("contact changed");
   }, [JSON.stringify(contact)]);
 
   // TODO(jm): more appropriate React way to do this?
