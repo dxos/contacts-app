@@ -59,6 +59,13 @@ export const ContactsList = ({
           </button>
         </li>
       </ul>
+      <p className="text-sm text-center text-gray-600">
+        Made with{" "}
+        <a className="text-blue-500" href="https://dxos.org">
+          DXOS
+        </a>
+        .
+      </p>
     </aside>
   );
 };
