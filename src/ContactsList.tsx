@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { ContactType } from "./types";
 
@@ -7,6 +7,8 @@ export type ContactsListProps = {
   onSelect: (contact: ContactType) => void;
   onCreate: () => void;
   onInviteClick: () => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
 };
 
 const contactNameIsBlank = (contact: ContactType) => {
@@ -18,10 +20,22 @@ export const ContactsList = ({
   onSelect,
   onCreate,
   onInviteClick,
+  isSidebarOpen,
+  setIsSidebarOpen,
 }: ContactsListProps) => {
   return (
-    <aside className="w-1/4 bg-gray-200 dark:bg-gray-800 relative">
+    <aside
+      className={`md:w-1/4 w-full bg-gray-200 dark:bg-gray-800 transform md:transform-none md:translate-x-0 fixed md:relative h-full md:h-auto z-10 md:z-0 transition-transform duration-300 ease-in-out ${
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      } `}
+    >
       <div className="inline absolute right-0 mt-5 pr-4">
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded mx-2 md:hidden"
+        >
+          Close
+        </button>
         <button
           onClick={onInviteClick}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded mx-2"
@@ -59,13 +73,6 @@ export const ContactsList = ({
           </button>
         </li>
       </ul>
-      <p className="text-sm text-center text-gray-600">
-        Made with{" "}
-        <a className="text-blue-500" href="https://dxos.org">
-          DXOS
-        </a>
-        .
-      </p>
     </aside>
   );
 };
