@@ -4,9 +4,9 @@ export class ContactType extends TypedObject({
   typename: "dxos.app.contacts.Contact",
   version: "0.1.0",
 })({
-  firstName: S.string,
-  lastName: S.string,
-  website: S.string,
-  phone: S.string,
-  email: S.string,
+  firstName: S.optional(S.string),
+  lastName: S.optional(S.string),
+  website: S.optional(S.string),
+  phone: S.optional(S.string),
+  email: S.optional(S.string),
 }) {}

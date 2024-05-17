@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { ContactType } from "./types";
+import { ReactiveObject } from "@dxos/echo-schema";
 
 export type ContactProps = {
-  contact: ContactType | null;
+  contact: ReactiveObject<any> | null;
   onCreate: () => void;
-  onDelete: (contact: ContactType) => void;
+  onDelete: (contact: ReactiveObject<any>) => void;
 };
 
 // -- TODO(Zan): Move to contact module
-const contactIsEmpty = (contact: ContactType) => {
+const contactIsEmpty = (contact: ReactiveObject<any>) => {
   return (
     !contact.firstName &&
     !contact.lastName &&
@@ -19,15 +19,16 @@ const contactIsEmpty = (contact: ContactType) => {
   );
 };
 
-type ContactTypeKey = keyof ContactType;
-// --/
-
 export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
   const [editMode, setEditMode] = useState(false);
-  const [formState, setFormState] = useState<ContactType>(
+  const [formState, setFormState] = useState<ReactiveObject<any>>(
     // Hack to make a deep copy of the contact object and eject from the reactive proxy.
     JSON.parse(JSON.stringify(contact))
   );
+
+  useEffect(() => {
+    setFormState(JSON.parse(JSON.stringify(contact)));
+  }, [JSON.stringify(contact)]);
 
   // TODO(jm): more appropriate React way to do this?
   const firstNameInputRef = useRef<HTMLInputElement>(null);
@@ -40,10 +41,7 @@ export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
   }, [contact, setEditMode]);
 
   const updateContactField = useCallback(
-    <Field extends ContactTypeKey>(
-      field: Field,
-      newValue: ContactType[Field]
-    ) => {
+    (field: string, newValue: any) => {
       // Mutate the reactive echo object
       contact[field] = newValue;
     },
@@ -65,33 +63,45 @@ export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
           <input
             ref={firstNameInputRef}
             type="text"
-            value={formState.firstName}
+            value={formState?.firstName}
             onChange={(e) =>
               setFormState((state) => ({ ...state, firstName: e.target.value }))
             }
             onBlur={(e) => updateContactField("firstName", e.target.value)}
             className="rounded border px-2 py-1 text-2xl font-bold text-center"
-            style={{ width: `${formState.firstName.length + 1}ch` }}
+            style={{
+              width: `${
+                formState?.firstName ? formState?.firstName.length + 1 : 0
+              }ch`,
+            }}
           />
           <input
             type="text"
-            value={formState.lastName}
+            value={formState?.lastName}
             onChange={(e) =>
               setFormState((state) => ({ ...state, lastName: e.target.value }))
             }
             onBlur={(e) => updateContactField("lastName", e.target.value)}
             className="rounded border px-2 py-1 text-2xl font-bold text-center"
-            style={{ width: `${formState.lastName.length + 1}ch` }}
+            style={{
+              width: `${
+                formState?.lastName ? formState.lastName.length + 1 : 0
+              }ch`,
+            }}
           />
         </div>
       ) : (
         <div className="mb-4 border border-white px-2 py-1 text-center text-2xl font-bold dark:border-black dark:text-gray-200">
-          {formState.firstName.length > 0 ? formState.firstName : "\u00A0"}{" "}
-          {formState.lastName.length > 0 ? formState.lastName : "\u00A0"}
+          {formState?.firstName && formState.firstName.length > 0
+            ? formState.firstName
+            : "\u00A0"}{" "}
+          {formState?.lastName && formState.lastName.length > 0
+            ? formState.lastName
+            : "\u00A0"}
         </div>
       )}
       <div className="flex flex-col">
-        {(["email", "phone", "website"] as ContactTypeKey[]).map((field) => {
+        {["email", "phone", "website"].map((field) => {
           return (
             <div
               key={field}
@@ -115,7 +125,7 @@ export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
                   />
                 </div>
               ) : (
-                <div className="px-2 py-1">{contact[field] ?? ""}</div>
+                <div className="px-2 py-1">{formState[field] ?? ""}</div>
               )}
             </div>
           );
