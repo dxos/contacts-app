@@ -96,6 +96,12 @@ export const ContactsPage = () => {
         />
       ) : (
         <section className="flex-grow bg-white p-4 shadow-lg dark:bg-black">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded md:hidden"
+          >
+            All Contacts
+          </button>
           <div className="flex justify-center items-center h-full">
             <button
               onClick={handleCreateContact}
