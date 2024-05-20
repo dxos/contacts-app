@@ -50,7 +50,8 @@ export const ContactsPage = () => {
   const [selectedContact, setSelectedContact] =
     useState<ReactiveObject<any> | null>(contacts[0] || null);
 
-  const handleSelectContact = (contact: DynamicEchoSchema) => {
+  const handleSelectContact = (contact: ReactiveObject<any>) => {
+    setIsSidebarOpen(false);
     setSelectedContact(contact);
   };
 
@@ -59,7 +60,7 @@ export const ContactsPage = () => {
 
     space.db.add(contact);
 
-    setSelectedContact(contact);
+    handleSelectContact(contact);
   }, [space.db, persistedContactType]);
 
   const handleDeleteContact = (contact: DynamicEchoSchema) => {
@@ -67,8 +68,10 @@ export const ContactsPage = () => {
     setSelectedContact(null);
   };
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
-    <main className="flex min-h-screen">
+    <main className="flex flex-grow min-h-screen">
       <ContactsList
         contacts={contacts}
         onSelect={handleSelectContact}
@@ -79,14 +82,29 @@ export const ContactsPage = () => {
           }
           void shell.shareSpace({ spaceKey: space?.key });
         }}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
-      {selectedContact && (
+      {selectedContact !== null ? (
         <Contact
           key={selectedContact.id} // Note: Keying on ID creates a new component instance when the ID changes.
           contact={selectedContact}
           onCreate={handleCreateContact}
           onDelete={handleDeleteContact}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
         />
+      ) : (
+        <section className="flex-grow bg-white p-4 shadow-lg dark:bg-black">
+          <div className="flex justify-center items-center h-full">
+            <button
+              onClick={handleCreateContact}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded"
+            >
+              Create New Contact
+            </button>
+          </div>
+        </section>
       )}
     </main>
   );

@@ -6,6 +6,8 @@ export type ContactProps = {
   contact: ReactiveObject<any> | null;
   onCreate: () => void;
   onDelete: (contact: ReactiveObject<any>) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
 };
 
 // -- TODO(Zan): Move to contact module
@@ -19,7 +21,13 @@ const contactIsEmpty = (contact: ReactiveObject<any>) => {
   );
 };
 
-export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
+export const Contact = ({
+  contact,
+  onCreate,
+  onDelete,
+  isSidebarOpen,
+  setIsSidebarOpen,
+}: ContactProps) => {
   const [editMode, setEditMode] = useState(false);
   const [formState, setFormState] = useState<ReactiveObject<any>>(
     // Hack to make a deep copy of the contact object and eject from the reactive proxy.
@@ -48,13 +56,19 @@ export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
     [contact]
   );
 
-  return contact ? (
-    <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
+  return (
+    <section className="flex-grow bg-white p-4 shadow-lg dark:bg-black">
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded md:hidden"
+      >
+        All Contacts
+      </button>
       <button
         onClick={() => {
           setEditMode(!editMode);
         }}
-        className="absolute right-0 top-0 m-4 rounded bg-blue-500 px-4 py-2 text-white"
+        className="absolute right-0 top-0 m-4 rounded bg-blue-500 px-2 py-1 text-white text-sm font-bold"
       >
         {editMode ? "Done" : "Edit"}
       </button>
@@ -125,7 +139,7 @@ export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
                   />
                 </div>
               ) : (
-                <div className="px-2 py-1">{formState[field] ?? ""}</div>
+                <div className="px-2 py-1">{formState[field] ?? "\u00A0"}</div>
               )}
             </div>
           );
@@ -145,17 +159,13 @@ export const Contact = ({ contact, onCreate, onDelete }: ContactProps) => {
           </button>
         ) : null}
       </div>
-    </section>
-  ) : (
-    <section className="w-3/4 bg-white p-4 shadow-lg dark:bg-black">
-      <div className="flex justify-center items-center h-full">
-        <button
-          onClick={onCreate}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded"
-        >
-          Create New Contact
-        </button>
-      </div>
+      <p className="mt-3 text-sm text-center text-gray-600">
+        Made with{" "}
+        <a className="text-blue-500" href="https://dxos.org">
+          DXOS
+        </a>
+        .
+      </p>
     </section>
   );
 };
