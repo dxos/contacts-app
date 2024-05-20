@@ -60,7 +60,7 @@ export const Contact = ({
     <section className="flex-grow bg-white p-4 shadow-lg dark:bg-black">
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded mx-2 md:hidden"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded md:hidden"
       >
         All Contacts
       </button>
@@ -68,7 +68,7 @@ export const Contact = ({
         onClick={() => {
           setEditMode(!editMode);
         }}
-        className="absolute right-0 top-0 m-4 rounded bg-blue-500 px-4 py-2 text-white"
+        className="absolute right-0 top-0 m-4 rounded bg-blue-500 px-2 py-1 text-white text-sm font-bold"
       >
         {editMode ? "Done" : "Edit"}
       </button>
