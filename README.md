@@ -4,7 +4,7 @@ This is an example app created with [DXOS](https://dxos.org). Check out some of 
 
 ![Contacts app sharing with a phone](assets/contacts-app-share-browser-phone.gif)
 
-Run [Contacts](https://contacts.dxos.network) on `dxos.network`.
+Try out [Contacts](https://contacts.dxos.network) on `dxos.network`.
 
 ## Running
 
