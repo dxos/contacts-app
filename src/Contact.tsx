@@ -165,6 +165,12 @@ export const Contact = ({
           DXOS
         </a>
         .
+        <a
+          className="text-blue-500 block mt-2"
+          href="https://github.com/dxos/contacts-app"
+        >
+          View Source
+        </a>
       </p>
     </section>
   );

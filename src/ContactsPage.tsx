@@ -105,10 +105,23 @@ export const ContactsPage = () => {
           <div className="flex justify-center items-center h-full">
             <button
               onClick={handleCreateContact}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 text-sm rounded block"
             >
               Create New Contact
             </button>
+            <p className="mb-3 text-sm text-center text-gray-600 absolute bottom-0">
+              Made with{" "}
+              <a className="text-blue-500" href="https://dxos.org">
+                DXOS
+              </a>
+              .
+              <a
+                className="text-blue-500 block mt-2"
+                href="https://github.com/dxos/contacts-app"
+              >
+                View Source
+              </a>
+            </p>
           </div>
         </section>
       )}
