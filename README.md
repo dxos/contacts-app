@@ -2,9 +2,7 @@
 
 This is an example app created with [DXOS](https://dxos.org). Check out some of our [other examples](https://docs.dxos.org/guide/samples.html).
 
-<video src="assets/contacts-sync-with-mobile.mp4" controls>
-  Your browser does not support the video tag.
-</video>
+![Contacts app sharing with a phone](contacts-app-share-browser-phone.gif)
 
 Run [Contacts](https://contacts.dxos.network) on `dxos.network`.
 
