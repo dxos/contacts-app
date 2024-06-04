@@ -1,10 +1,12 @@
-# contacts-dxos
+# DXOS Contacts Example App
 
-This app was created with a DXOS application template.
+This is an example app created with [DXOS](https://dxos.org). Check out some of our [other examples](https://docs.dxos.org/guide/samples.html).
 
-- [x] React
-- [ ] DXOS UI System
-- [ ] Storybook
+![Contacts app sharing with a phone](assets/contacts-app-share-browser-phone.gif)
+
+Try out [Contacts](https://contacts.dxos.network) on `dxos.network`.
+
+## Running
 
 Run the app with `npm`:
 
@@ -19,17 +21,7 @@ Build the app to the `out` folder:
 npm run build
 ```
 
-Deploy the app to a [DXOS Kube](https://docs.dxos.org/guide/kube):
+## Docs
 
-```bash
-npm run deploy
-```
-
-Run storybook in this project
-
-```bash
-npm run storybook
-```
-
-[📚 Using ECHO with React](https://docs.dxos.org/guide/react)
+[📚 Using ECHO with React](https://docs.dxos.org/guide/echo/)
 [📚 DXOS Documentation](https://docs.dxos.org)
